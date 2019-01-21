@@ -2387,7 +2387,7 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
       {
         *tmp = (uint16_t)(huart->Instance->DR & (uint16_t)0x00FF);
         //if the pRx
-        if( (huart->pRxBuffPtr == varPtr) && ( (uint8_t)(*tmp) != 'H'  ) )
+        if( (huart->pRxBuffPtr == varPtr) && ( (uint8_t)(huart->Instance->DR & 0xFF) != 'H'  ) )
         {
         	huart->pRxBuffPtr = varPtr;
         }
@@ -2401,8 +2401,8 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
     {
       if(huart->Init.Parity == UART_PARITY_NONE)
       {
-    	  *tmp = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FF);
-    	  if( (huart->pRxBuffPtr == varPtr) && ( (uint8_t)(*tmp) != 'H'  ) )
+    	 // *tmp = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FF);
+    	  if( (huart->pRxBuffPtr == varPtr) && ( (uint8_t)(huart->Instance->DR & 0xFF) != 'H'  ) )
     	          {
 
     	          	huart->pRxBuffPtr = varPtr;
