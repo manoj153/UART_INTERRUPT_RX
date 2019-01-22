@@ -233,6 +233,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		HAL_Delay(5);
 	}
 }
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+	HAL_UART_Receive_IT(&huart1, varPtr, 7);
+}
 /* USER CODE END 4 */
 
 /**

@@ -2385,9 +2385,10 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
       }
       else
       {
-        *tmp = (uint16_t)(huart->Instance->DR & (uint16_t)0x00FF);
+        //*tmp = (uint16_t)(huart->Instance->DR & (uint16_t)0x00FF);
         //if the pRx
-        if( (huart->pRxBuffPtr == varPtr) && ( (uint8_t)(huart->Instance->DR & 0xFF) != 'H'  ) )
+    	 uint8_t data = (uint8_t)(huart->Instance->DR & 0xFF);
+        if( (huart->pRxBuffPtr == varPtr) && ( data != 'H'  ) )
         {
         	huart->pRxBuffPtr = varPtr;
         }
@@ -2399,19 +2400,28 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
     }
     else
     {
+       uint8_t data = (uint8_t)(huart->Instance->DR & 0xFF);
       if(huart->Init.Parity == UART_PARITY_NONE)
       {
-    	 // *tmp = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FF);
-    	  if( (huart->pRxBuffPtr == varPtr) && ( (uint8_t)(huart->Instance->DR & 0xFF) != 'H'  ) )
+
+    	  if( (huart->pRxBuffPtr == varPtr) && ( data != 'H'  ) )
     	          {
 
     	          	huart->pRxBuffPtr = varPtr;
     	          	*huart->pRxBuffPtr = 'F';
+    	          	huart->RxState = HAL_UART_STATE_READY;
+    	          	CLEAR_BIT(huart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE));
+    	          	CLEAR_BIT(huart->Instance->CR3, USART_CR3_EIE);
+    	          	//__HAL_UART_FLUSH_DRREGISTER(huart);
+    	          	HAL_UART_Receive_IT(huart,varPtr,7);
+    	          	return HAL_BUSY;
+
     	          }
     	          else
     	          {
-    	          //huart->pRxBuffPtr += 1U;
-    	          *huart->pRxBuffPtr++ = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FF);
+    	          *huart->pRxBuffPtr = data;
+    	          huart->pRxBuffPtr += 1U;
+    	          //*huart->pRxBuffPtr++ = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FF);
     	          }
 
 
